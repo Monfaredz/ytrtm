@@ -1,5 +1,6 @@
 # Netlify serves the web app from web/public and the single function from
-# web/netlify/functions (both relative to `base`).
+# web/netlify/functions (both relative to `base`). The /api/ytm rewrite lives in
+# web/public/_redirects so manual CLI deploys work the same way.
 [build]
   base = "web"
   publish = "public"
@@ -7,8 +8,3 @@
 
 [build.environment]
   NODE_VERSION = "20"
-
-[[redirects]]
-  from = "/api/ytm"
-  to = "/.netlify/functions/ytm"
-  status = 200

@@ -27,24 +27,47 @@
 
 ---
 
-## دیپلوی روی Netlify (کلیک‌به‌کلیک)
+## دیپلوی روی Netlify
 
-1. `netlify.com` → **Sign up** → **Sign up with GitHub**. (ورود و اجازه‌ها را خودت انجام
-   می‌دهی؛ من رمزی نمی‌خواهم.)
-2. **Add new site** → **Import an existing project**.
-3. **GitHub** → اگر پرسید **Authorize** → مخزن **Monfaredz/ytrtm** را انتخاب کن.
-4. صفحهٔ **Build settings**: چون `netlify.toml` در ریشهٔ مخزن هست، `base` و `publish`
-   خودکار پر می‌شوند. **Build command** را خالی بگذار. یک نام سایت مثلاً
-   `ytm-web-<چیزی>` انتخاب کن → **Deploy site**.
-5. حدود یک دقیقه صبر کن. آدرس `https://<name>.netlify.app` آماده می‌شود.
-6. **Site configuration → Environment variables → Add a variable**:
-   - Key: `APP_KEY`
-   - Value: یک رشتهٔ طولانی و تصادفی (مثلاً ۳۰ کاراکتر)
-   - **Save**.
-7. **Deploys → Trigger deploy → Deploy site**. متغیرهای محیطی فقط با دیپلوی تازه اعمال می‌شوند.
+به اکانت GitHub وصل شدن لازم نیست. دو راه هست.
+
+### راه اول: Netlify CLI (بدون اتصال به GitHub)
+
+ورود به Netlify با ایمیل یا گوگل انجام می‌شود، نه گیت‌هاب. خودِ آپلود از روی همین
+کامپیوتر با ابزار رسمی Netlify انجام می‌شود.
+
+```powershell
+cd "C:\Users\NoteBook\Documents\Qoder\2026-11-16\d6110c31\ytm-ios-poc\web"
+npx netlify-cli@latest login
+npx netlify-cli@latest deploy --prod --dir=public --functions=netlify/functions
+```
+
+- دستور `login` یک مرورگر باز می‌کند؛ آنجا **Sign up** با ایمیل یا گوگل. رمز و
+  کد را فقط خودت وارد می‌کنی.
+- دستور `deploy` اگر سایت نداشته باشی می‌پرسد سایت تازه بسازد؛ **Create & configure
+  a new site** را انتخاب کن و یک نام بده. آخرش آدرس `https://<name>.netlify.app` را
+  چاپ می‌کند.
+- بار اول دانلود CLI کمی طول می‌کشد (حدود ۱۰۰ مگابایت).
+
+بعد کلید را ست کن و یک بار دیگر همان deploy را بزن:
+
+```powershell
+npx netlify-cli@latest env:set APP_KEY "یک-رشته-طولانی-تصادفی"
+npx netlify-cli@latest deploy --prod --dir=public --functions=netlify/functions
+```
 
 اگر `APP_KEY` را نگذاری، هر کسی که آدرس سایت را بداند می‌تواند از آن استفاده کند.
 برای استفادهٔ شخصی حتماً بگذارش.
+
+### راه دوم: Import از GitHub
+
+1. `netlify.com` → **Sign up with GitHub** (ورود را خودت انجام می‌دهی).
+2. **Add new site** → **Import an existing project** → **GitHub** → **Authorize** →
+   مخزن **Monfaredz/ytrtm**.
+3. در **Build settings** چیزی پر نکن؛ `netlify.toml` در ریشهٔ مخزن `base`، `publish`
+   و تابع‌ها را تعیین می‌کند → **Deploy site**.
+4. بعد از دیپلوی، `APP_KEY` را در **Site configuration → Environment variables**
+   بساز و از **Deploys → Trigger deploy** یک دیپلوی تازه بزن.
 
 ### باز کردن روی گوشی
 
