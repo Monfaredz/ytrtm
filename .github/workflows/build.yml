@@ -4,6 +4,10 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
+    paths:
+      - "rust/**"
+      - "app/**"
+      - ".github/workflows/build.yml"
 
 jobs:
   ios:

@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="referrer" content="no-referrer">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="YTM Web">
+  <meta name="theme-color" content="#0f1115">
+  <title>YTM Web</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <header class="top">
+    <div>
+      <h1>YTM Web</h1>
+      <p class="sub">جست‌وجو و پخش روی گوشی — نسخهٔ آزمایشی</p>
+    </div>
+    <button id="settingsBtn" class="ghost" type="button">کلید</button>
+  </header>
+
+  <main>
+    <form id="searchForm" class="search">
+      <input id="q" type="search" placeholder="نام آهنگ یا خواننده" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search">
+      <button type="submit" id="searchBtn">جست‌وجو</button>
+    </form>
+
+    <p id="status" class="status" role="status">آماده.</p>
+
+    <section id="keyBox" class="key-box" hidden>
+      <label for="key">کلید دسترسی (APP_KEY)</label>
+      <div class="row">
+        <input id="key" type="password" autocomplete="off" spellcheck="false" dir="ltr" placeholder="APP_KEY">
+        <button id="saveKey" type="button">ذخیره</button>
+      </div>
+      <p class="hint">همان مقداری که در Netlify به‌عنوان APP_KEY گذاشته شده.</p>
+    </section>
+
+    <ol id="hits" class="hits"></ol>
+
+    <section class="player">
+      <div class="now">
+        <strong id="nowTitle">چیزی انتخاب نشده</strong>
+        <span id="nowMeta" class="meta"></span>
+      </div>
+
+      <audio id="audio" controls preload="none" playsinline></audio>
+
+      <div class="row wrap">
+        <label class="check" for="hls"><input id="hls" type="checkbox"> HLS</label>
+        <a id="directLink" class="ghost link" href="#" target="_blank" rel="noreferrer" hidden>باز کردن لینک در تب</a>
+        <button id="copyLog" class="ghost" type="button">کپی لاگ</button>
+        <button id="clearLog" class="ghost" type="button">پاک‌کردن لاگ</button>
+      </div>
+
+      <p class="hint">اولین پخش باید با لمس دکمهٔ ▶ شروع شود. اگر پخش مستقیم شکست خورد، HLS را روشن کن و دوباره بزن.</p>
+
+      <pre id="log" class="log" aria-live="polite"></pre>
+    </section>
+  </main>
+
+  <script type="module" src="/app.js"></script>
+</body>
+</html>

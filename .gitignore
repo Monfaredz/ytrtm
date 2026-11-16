@@ -5,3 +5,6 @@ build/
 out/
 *.ipa
 .DS_Store
+node_modules/
+.netlify/
+web/.env

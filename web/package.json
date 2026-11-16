@@ -1,0 +1,10 @@
+{
+  "name": "ytm-web",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "dev": "node dev-server.mjs",
+    "test": "node --test test/ytm.test.mjs"
+  }
+}
