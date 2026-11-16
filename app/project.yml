@@ -1,0 +1,41 @@
+name: YtmPoC
+options:
+  bundleIdPrefix: com.example
+  deploymentTarget:
+    iOS: "16.0"
+  createIntermediateGroups: true
+
+settings:
+  base:
+    SWIFT_VERSION: "5.9"
+    IPHONEOS_DEPLOYMENT_TARGET: "16.0"
+    TARGETED_DEVICE_FAMILY: "1"
+
+targets:
+  YtmPoC:
+    type: application
+    platform: iOS
+    sources:
+      - path: Sources
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.ytmpoc
+        INFOPLIST_FILE: Info.plist
+        GENERATE_INFOPLIST_FILE: NO
+        SWIFT_OBJC_BRIDGING_HEADER: "$(SRCROOT)/Sources/Bridging.h"
+        # libytmcore.a, built by CI for aarch64-apple-ios.
+        LIBRARY_SEARCH_PATHS:
+          - "$(SRCROOT)/../rust/target/aarch64-apple-ios/release"
+        OTHER_LDFLAGS:
+          - "-lytmcore"
+          - "-framework"
+          - "Security"
+          - "-framework"
+          - "CoreFoundation"
+          - "-lc++"
+        # Unsigned on purpose: Sideloadly signs the IPA with the user's own Apple ID.
+        CODE_SIGNING_ALLOWED: NO
+        CODE_SIGNING_REQUIRED: NO
+        CODE_SIGN_IDENTITY: ""
+    scheme:
+      testTargets: []

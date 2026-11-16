@@ -1,0 +1,62 @@
+name: build-ipa
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  ios:
+    runs-on: macos-15
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check the layout
+        run: |
+          test -f rust/Cargo.toml || { echo "rust/ must sit at the repository root"; exit 1; }
+          test -f app/project.yml || { echo "app/ must sit at the repository root"; exit 1; }
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-ios
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: rust
+
+      - name: Unit tests (offline parsing)
+        run: cargo test --manifest-path rust/Cargo.toml
+
+      - name: Build the Rust core for iOS
+        run: cargo build --manifest-path rust/Cargo.toml --release --target aarch64-apple-ios
+        env:
+          IPHONEOS_DEPLOYMENT_TARGET: "16.0"
+
+      - name: Generate the Xcode project
+        run: |
+          brew install xcodegen
+          cd app && xcodegen generate
+
+      - name: Build the app (unsigned)
+        run: |
+          xcodebuild \
+            -project app/YtmPoC.xcodeproj \
+            -scheme YtmPoC \
+            -configuration Release \
+            -sdk iphoneos \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" \
+            build
+
+      - name: Package the IPA
+        run: |
+          mkdir -p out/Payload
+          cp -R build/Build/Products/Release-iphoneos/YtmPoC.app out/Payload/
+          cd out && zip -qry ../YtmPoC.ipa Payload
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: YtmPoC-ipa
+          path: YtmPoC.ipa
+          if-no-files-found: error
