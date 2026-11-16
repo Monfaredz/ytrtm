@@ -242,7 +242,12 @@ function appKey() {
   try {
     if (typeof Netlify !== "undefined" && Netlify?.env?.get) return Netlify.env.get("APP_KEY") ?? "";
   } catch {}
-  return process.env.APP_KEY ?? "";
+  // The generated Cloudflare Worker sets this from its own env binding.
+  if (typeof globalThis.__YTM_APP_KEY === "string" && globalThis.__YTM_APP_KEY) {
+    return globalThis.__YTM_APP_KEY;
+  }
+  if (typeof process !== "undefined" && process?.env) return process.env.APP_KEY ?? "";
+  return "";
 }
 
 function json(obj, status = 200) {

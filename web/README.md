@@ -21,17 +21,40 @@
 - `netlify/functions/ytm.js` — تنها بک‌اند: جست‌وجوی ناشناس WEB_REMIX + پلیر VISIONOS
   (همان دو درخواست هستهٔ Rust).
 - `public/` — صفحه، استایل، منطق پخش.
+- `dist/worker.js` — همان چیزها در یک فایل تک‌تکه برای Cloudflare Workers
+  (ساختهٔ `build-worker.mjs`؛ دستی ویرایشش نکن).
 - `dev-server.mjs` — اجرای محلی روی شبکهٔ خانگی.
-- `test/` — تست‌های آفلاین پارسر.
-- `../netlify.toml` — تنظیمات دیپلوی در ریشهٔ مخزن (`base = "web"`).
+- `test/` — تست‌های آفلاین.
+- `../netlify.toml` — تنظیمات دیپلوی Netlify در ریشهٔ مخزن (`base = "web"`).
 
 ---
 
-## دیپلوی روی Netlify
+## راه‌های انتشار
 
-به اکانت GitHub وصل شدن لازم نیست. دو راه هست.
+### راه اول (آسان‌ترین، بدون CLI و بدون گیت‌هاب): Cloudflare Workers
 
-### راه اول: Netlify CLI (بدون اتصال به GitHub)
+Cloudflare حساب را با ایمیل می‌سازد، رایگان است و کارت نمی‌خواهد. فقط یک فایل را در
+مرورگر می‌چسبانی؛ نه نصب چیزی لازم است، نه اتصال به GitHub.
+
+1. `dash.cloudflare.com` → **Sign up** با ایمیل (یا ورود).
+2. منوی سمت چپ → **Workers & Pages** → **Create** → **Workers** →
+   **Start with Hello World** → یک نام مثل `ytm-web` → **Deploy**.
+3. **Edit code** → داخل ویرایشگر همهٔ کد نمونه را پاک کن → محتوای فایل
+   `web/dist/worker.js` را بچسبان → **Deploy**.
+4. بالای صفحه → **Settings** → **Variables and Secrets** → **Add**:
+   - Name: `APP_KEY`
+   - Value: یک رشتهٔ طولانی و تصادفی (مثلاً ۳۰ کاراکتر)
+   - Type: **Secret**
+   → **Save and deploy**.
+5. آدرس Worker را باز کن: `https://<name>.<subdomain>.workers.dev`.
+   بار اول Cloudflare یک subdomain از تو می‌خواهد؛ همان‌جا انتخابش کن.
+
+محدودیت رایگان: ۱۰۰٬۰۰۰ درخواست در روز؛ برای این استفاده یعنی هیچ. اگر
+`APP_KEY` را نگذاری، هر کسی که آدرس را بداند می‌تواند استفاده کند؛ برای استفادهٔ
+شخصی حتماً بگذارش. (Cloudflare در ایران بدون VPN گاهی باز نمی‌شود؛ مثل خود یوتیوب
+با VPN روشن استفاده کن.)
+
+### راه دوم: Netlify CLI
 
 ورود به Netlify با ایمیل یا گوگل انجام می‌شود، نه گیت‌هاب. خودِ آپلود از روی همین
 کامپیوتر با ابزار رسمی Netlify انجام می‌شود.
@@ -47,7 +70,9 @@ npx netlify-cli@latest deploy --prod --dir=public --functions=netlify/functions
 - دستور `deploy` اگر سایت نداشته باشی می‌پرسد سایت تازه بسازد؛ **Create & configure
   a new site** را انتخاب کن و یک نام بده. آخرش آدرس `https://<name>.netlify.app` را
   چاپ می‌کند.
-- بار اول دانلود CLI کمی طول می‌کشد (حدود ۱۰۰ مگابایت).
+- بار اول دانلود CLI کمی طول می‌کشد و اگر شبکه ناپایدار باشد ممکن است از رجیستری
+  رسمی قطع شود؛ در آن صورت `--registry=https://registry.npmmirror.com` را به دستور
+  `npm install -g netlify-cli` اضافه کن.
 
 بعد کلید را ست کن و یک بار دیگر همان deploy را بزن:
 
@@ -56,12 +81,9 @@ npx netlify-cli@latest env:set APP_KEY "یک-رشته-طولانی-تصادفی"
 npx netlify-cli@latest deploy --prod --dir=public --functions=netlify/functions
 ```
 
-اگر `APP_KEY` را نگذاری، هر کسی که آدرس سایت را بداند می‌تواند از آن استفاده کند.
-برای استفادهٔ شخصی حتماً بگذارش.
+### راه سوم: Netlify از GitHub
 
-### راه دوم: Import از GitHub
-
-1. `netlify.com` → **Sign up with GitHub** (ورود را خودت انجام می‌دهی).
+1. `netlify.com` → **Sign up with GitHub**.
 2. **Add new site** → **Import an existing project** → **GitHub** → **Authorize** →
    مخزن **Monfaredz/ytrtm**.
 3. در **Build settings** چیزی پر نکن؛ `netlify.toml` در ریشهٔ مخزن `base`، `publish`
@@ -70,6 +92,7 @@ npx netlify-cli@latest deploy --prod --dir=public --functions=netlify/functions
    بساز و از **Deploys → Trigger deploy** یک دیپلوی تازه بزن.
 
 ### باز کردن روی گوشی
+
 
 1. سایت را در **Safari** باز کن → **Share** → **Add to Home Screen**.
 2. آیکون را باز کن → دکمهٔ **کلید** (بالا، چپ) → همان مقدار `APP_KEY` را بچسبان → **ذخیره**.

@@ -5,6 +5,7 @@
   "engines": { "node": ">=20" },
   "scripts": {
     "dev": "node dev-server.mjs",
-    "test": "node --test test/ytm.test.mjs"
+    "worker": "node build-worker.mjs",
+    "test": "node build-worker.mjs && node --test test/ytm.test.mjs test/worker.test.mjs"
   }
 }
